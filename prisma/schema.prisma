@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model blog_likes {
+  id         Int       @id @default(autoincrement())
+  blog_id    Int
+  user_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  blogs      blogs     @relation(fields: [blog_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_likes_ibfk_1")
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_likes_ibfk_2")
+
+  @@unique([blog_id, user_id], map: "unique_like")
+  @@index([user_id], map: "user_id")
+}
+
+model blog_media {
+  id          Int                   @id @default(autoincrement())
+  blog_id     Int
+  uploaded_by Int
+  file_name   String?               @db.VarChar(255)
+  file_url    String                @db.VarChar(500)
+  file_type   blog_media_file_type? @default(image)
+  mime_type   String?               @db.VarChar(100)
+  file_size   BigInt?
+  alt_text    String?               @db.VarChar(255)
+  caption     String?               @db.VarChar(255)
+  sort_order  Int?                  @default(1)
+  is_cover    Boolean?              @default(false)
+  created_at  DateTime?             @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?             @default(now()) @db.Timestamp(0)
+  blogs       blogs                 @relation(fields: [blog_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_media_blog")
+  users       users                 @relation(fields: [uploaded_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_media_user")
+
+  @@index([blog_id], map: "fk_media_blog")
+  @@index([uploaded_by], map: "fk_media_user")
+}
+
+model blogs {
+  id             Int               @id @default(autoincrement())
+  user_id        Int
+  category_id    Int?
+  title          String            @db.VarChar(255)
+  slug           String            @unique(map: "slug") @db.VarChar(255)
+  excerpt        String?           @db.Text
+  content        String            @db.LongText
+  cover_image    String?           @db.VarChar(255)
+  status         blogs_status?     @default(draft)
+  visibility     blogs_visibility? @default(public)
+  allow_comments Boolean?          @default(true)
+  featured       Boolean?          @default(false)
+  published_at   DateTime?         @db.Timestamp(0)
+  created_at     DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?         @default(now()) @db.Timestamp(0)
+  deleted_at     DateTime?         @db.Timestamp(0)
+  blog_likes     blog_likes[]
+  blog_media     blog_media[]
+  categories     categories?       @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_blog_category")
+  users          users             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_blog_user")
+  comments       comments[]
+
+  @@index([category_id], map: "fk_blog_category")
+  @@index([user_id], map: "fk_blog_user")
+}
+
+model categories {
+  id          Int                @id @default(autoincrement())
+  name        String             @unique(map: "name") @db.VarChar(100)
+  slug        String             @unique(map: "slug") @db.VarChar(120)
+  description String?            @db.Text
+  status      categories_status? @default(active)
+  created_at  DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?          @default(now()) @db.Timestamp(0)
+  blogs       blogs[]
+}
+
+model comments {
+  id             Int              @id @default(autoincrement())
+  blog_id        Int
+  user_id        Int
+  parent_id      Int?
+  comment        String           @db.Text
+  is_edited      Boolean?         @default(false)
+  status         comments_status? @default(active)
+  created_at     DateTime?        @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(0)
+  blogs          blogs            @relation(fields: [blog_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_1")
+  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_2")
+  comments       comments?        @relation("commentsTocomments", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_3")
+  other_comments comments[]       @relation("commentsTocomments")
+
+  @@index([blog_id], map: "blog_id")
+  @@index([parent_id], map: "parent_id")
+  @@index([user_id], map: "user_id")
+}
+
+model roles {
+  id          Int       @id @default(autoincrement())
+  role_name   String    @unique(map: "role_name") @db.VarChar(50)
+  description String?   @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  users       users[]
+}
+
+model user_profiles {
+  id          Int       @id @default(autoincrement())
+  user_id     Int       @unique(map: "user_id")
+  username    String    @unique(map: "username") @db.VarChar(50)
+  name        String    @db.VarChar(150)
+  avatar      String?   @db.VarChar(255)
+  cover_image String?   @db.VarChar(255)
+  bio         String?   @db.Text
+  website_url String?   @db.VarChar(255)
+  location    String?   @db.VarChar(150)
+  twitter     String?   @db.VarChar(255)
+  github      String?   @db.VarChar(255)
+  linkedin    String?   @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_profile_user")
+}
+
+model users {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique(map: "email") @db.VarChar(255)
+  password_hash String         @db.VarChar(255)
+  role_id       Int
+  is_verified   Boolean?       @default(false)
+  status        users_status?  @default(active)
+  created_at    DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?      @default(now()) @db.Timestamp(0)
+  blog_likes    blog_likes[]
+  blog_media    blog_media[]
+  blogs         blogs[]
+  comments      comments[]
+  user_profiles user_profiles?
+  roles         roles          @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_role")
+
+  @@index([role_id], map: "fk_users_role")
+}
+
+enum categories_status {
+  active
+  inactive
+}
+
+enum blog_media_file_type {
+  image
+  video
+  audio
+  pdf
+}
+
+enum users_status {
+  active
+  inactive
+  banned
+}
+
+enum comments_status {
+  active
+  hidden
+  deleted
+}
+
+enum blogs_status {
+  draft
+  published
+  archived
+}
+
+enum blogs_visibility {
+  public
+  private
+  unlisted
+}
