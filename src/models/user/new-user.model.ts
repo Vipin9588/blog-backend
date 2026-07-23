@@ -1,5 +1,5 @@
 import prisma from "#/config/prisma.js";
-import { userType } from '#/type/user/user.type.js';
+import { userProfileType, userType } from '#/type/user/user.type.js';
 
 const DEFAULT_ROLE_ID = 2; 
 const newUser = async (user: userType) => {
@@ -21,3 +21,16 @@ const newUser = async (user: userType) => {
   }
 };
 
+
+const newUserProfile = async(userInfo:userProfileType)=>{
+  try {
+    const response =  await prisma.user_profiles.create({
+      data:userInfo
+    })
+
+    return response;
+  } catch (error) {
+     console.error(error);
+     throw error
+  }
+}
