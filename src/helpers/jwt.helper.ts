@@ -2,7 +2,7 @@ import jwt, { type JwtPayload, type SignOptions } from 'jsonwebtoken';
 import { env } from '#/config/env.js';
 
 interface TokenPayload {
-  userId: string;
+  id: number;
   email: string;
   role: string;
 }
@@ -28,3 +28,5 @@ const tokenVerification = (token: string): TokenPayload | JwtPayload => {
 
   return jwt.verify(token, env.JWT_SECRET) as TokenPayload | JwtPayload;
 }
+
+export {tokenGenerator,tokenVerification};
