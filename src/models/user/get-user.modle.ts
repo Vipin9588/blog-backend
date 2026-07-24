@@ -1,23 +1,32 @@
 import prisma from "#/config/prisma.js";
+import { verifyPassword } from "#/helpers/password.helper.js";
 
-const getUser = async (userId: number) => {
-    if (!userId || userId <= 0) {
-        throw new Error("Invalid User Id")
-    }
+const loginUser = async (userEmail: string, password: string) => {
+
     try {
-        const response = await prisma.users.findUnique({
+        const user = await prisma.users.findUnique({
             where: {
-                id: userId,
+                email: userEmail,
             },
             include: {
                 user_profiles: true,
+                roles: true
             },
         });
 
-        if (!response) {
+        if (!user) {
             throw new Error("User not found");
         }
-        return response;
+        const isPasswordValid = await verifyPassword(
+            password,
+            user.password_hash
+        );
+
+        if (!isPasswordValid) {
+            throw new Error("Invalid password");
+        }
+
+        return user
     } catch (error) {
         throw error;
     }
@@ -25,3 +34,4 @@ const getUser = async (userId: number) => {
 
 
 
+export { loginUser }
