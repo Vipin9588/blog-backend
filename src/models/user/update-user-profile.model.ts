@@ -18,3 +18,5 @@ const updateUserProfile = async (userID: number, newData: userProfileDTO) => {
         throw error
     }
 }
+
+export {updateUserProfile}

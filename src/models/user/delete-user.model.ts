@@ -2,7 +2,7 @@ import prisma from "#/config/prisma.js";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 
-const deleteUser = async (user_id: number) => {
+ const deleteUser = async (user_id: number) => {
 
     if (!user_id && user_id <= 0) {
         throw new Error("Invalid user ID");
@@ -24,3 +24,4 @@ const deleteUser = async (user_id: number) => {
     }
 }
 
+export {deleteUser}
