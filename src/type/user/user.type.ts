@@ -10,7 +10,6 @@ interface userType {
 }
 
 interface userProfileDTO{
-    user_id?: number,
     username?: string,
     name?: string,
     avatar?: string,
