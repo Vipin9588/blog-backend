@@ -1,11 +1,8 @@
 import jwt, { type JwtPayload, type SignOptions } from 'jsonwebtoken';
 import { env } from '#/config/env.js';
+import { TokenPayload,refreshPayload } from '#/type/user/user.type.js';
 
-interface TokenPayload {
-  id: number;
-  email: string;
-  role: string;
-}
+
 
 const tokenGenerator = (payload: TokenPayload) => {
   if (!env.JWT_SECRET) {
@@ -20,13 +17,27 @@ const tokenGenerator = (payload: TokenPayload) => {
 }
 
 
-const tokenVerification = (token: string): TokenPayload | JwtPayload => {
+const tokenVerification = <T>(token: string):T=> {
 
   if (!env.JWT_SECRET) {
     throw new Error("JWT_SECRET is missing");
   }
 
-  return jwt.verify(token, env.JWT_SECRET) as TokenPayload | JwtPayload;
+  return jwt.verify(token, env.JWT_SECRET) as T;
 }
 
-export {tokenGenerator,tokenVerification};
+const refreshTokenGenrate = (payload:refreshPayload ) => {
+  if (!env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is missing");
+  }
+  if (!payload) { throw new Error("Enter the payload") }
+  const refresToken = jwt.sign(payload, env.JWT_SECRET, {
+    algorithm: 'HS256',
+    expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"]
+  })
+  return refresToken;
+}
+
+
+
+export { tokenGenerator, tokenVerification,refreshTokenGenrate };

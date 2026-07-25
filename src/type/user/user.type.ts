@@ -37,6 +37,26 @@ interface userProfileType {
     linkedin?: string,
 }
 
+//rfresh token type
 
+ interface RefreshTokenTableType {
+  user_id: number;
+  jti: string;
+  token: string;
+  expires_at: Date;
+}
 
-export { userType, userProfileType,userProfileDTO}
+// payload Type
+
+interface TokenPayload {
+  id: number;
+  email: string;
+  role: string;
+}
+
+interface refreshPayload{ 
+  sub: string, 
+  jti: string 
+}
+
+export { userType, userProfileType,userProfileDTO,RefreshTokenTableType,TokenPayload,refreshPayload}
