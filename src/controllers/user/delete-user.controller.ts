@@ -39,4 +39,4 @@ import { deleteUser } from "#/models/user/delete-user.model.js";
     }
 };
 
-export {deleteUser}
+export {deleteUserController}
