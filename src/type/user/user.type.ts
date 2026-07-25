@@ -1,5 +1,7 @@
 interface userType {
     id?: number,
+    username:string,
+    name:string,
     email: string,
     password_hash: string,
     role_id?: number,
