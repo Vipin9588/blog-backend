@@ -6,7 +6,7 @@ const updateUserProfile = async (userID: number, newData: userProfileDTO) => {
     try {
         const response = await prisma.user_profiles.update({
             where: {
-                id: userID
+                user_id: userID
             },
             data: newData
         })
