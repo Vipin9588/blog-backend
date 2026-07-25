@@ -1,7 +1,10 @@
 import { loginUser } from "#/models/user/get-user.modle.js";
 import { Request, Response } from "express";
-import { tokenGenerator } from "#/helpers/jwt.helper.js";
+import { refreshTokenGenrate, tokenGenerator } from "#/helpers/jwt.helper.js";
 import { env } from "#/config/env.js";
+import { v4 as uuid4 } from "uuid";
+import { addRefreshToken } from "#/models/user/refresh-token.model.js";
+import { hasingPassword } from "#/helpers/password.helper.js";
 const loginUserController = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -11,19 +14,44 @@ const loginUserController = async (req: Request, res: Response) => {
                 message: "Email and password are required."
             });
         }
-        const user = await loginUser(email, password);
+        const user = await loginUser(email, password); // is Exist
+        const jti_id = uuid4(); // for unique refersh token
+
         const payload = {
             id: user.id,
             email: user.email,
             role: user.roles.role_name,
         }
-        const token = tokenGenerator(payload);
+
+        const refreshPayload = { //refershToke payload
+            sub: user.id.toString(),
+            jti: jti_id,
+        }
+
+        const token = tokenGenerator(payload); // Access Token       
+        const refreshToken = refreshTokenGenrate(refreshPayload);
+        const hashedRefreshToken = await hasingPassword(refreshToken)
+       const refreshTokenTableData = {
+            user_id:user.id,
+            jti:jti_id,
+            token:hashedRefreshToken,
+            expires_at: new Date(Date.now()+7*24*60*60*1000)
+        }
+
+        await addRefreshToken(refreshTokenTableData);
 
         res.cookie("accessToken", token, {
             httpOnly: true,
             secure: env.NODE_ENV === "production",
             sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000,
+        })
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         return res.status(200).json({
