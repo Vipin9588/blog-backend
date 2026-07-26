@@ -1,4 +1,4 @@
-import { loginUser } from "#/models/user/get-user.modle.js";
+import { loginUser } from "#/models/user/login-user.model.js";
 import { Request, Response } from "express";
 import { refreshTokenGenrate, tokenGenerator } from "#/helpers/jwt.helper.js";
 import { env } from "#/config/env.js";

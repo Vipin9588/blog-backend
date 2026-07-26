@@ -40,4 +40,4 @@ const refreshTokenGenrate = (payload:refreshPayload ) => {
 
 
 
-export { tokenGenerator, tokenVerification,refreshTokenGenrate };
+export { tokenGenerator, tokenVerification,refreshTokenGenrate };   
