@@ -6,9 +6,8 @@ import { deleteUser } from "#/models/user/delete-user.model.js";
     res: Response
 ) => {
     try {
-        const userId = Number(req.params.id);
-
-        const deletedUser = await deleteUser(userId);
+         const {id} = req.user
+        const deletedUser = await deleteUser(id);
 
         return res.status(200).json({
             success: true,

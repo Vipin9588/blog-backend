@@ -2,9 +2,9 @@ import { updateUserProfile } from "#/models/user/update-user-profile.model.js";
 import { Request, Response } from "express";
 const updateUserController = async (req: Request, res: Response) => {
     try {
-        const user = Number(req.params.id);
+        const {id} = req.user;
         const newData = req.body;
-        const updated = await updateUserProfile(user, newData);
+        const updated = await updateUserProfile(id, newData);
         return res.status(200).json({
             success: true,
             message: "Updated Successfully",
