@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import { tokenVerification } from "#/helpers/jwt.helper.js";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { TokenPayload } from "#/type/user/user.type.js";
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -19,14 +19,14 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     } catch (error) {
 
-        if (error instanceof TokenExpiredError) {
+        if (error instanceof jwt.TokenExpiredError) {
             return res.status(401).json({
                 success: false,
                 message: "Access token expired"
             });
         }
 
-        if (error instanceof JsonWebTokenError) {
+        if (error instanceof jwt.JsonWebTokenError) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid access token"
@@ -39,3 +39,5 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
         });
     }
 }
+
+export default authMiddleware;
