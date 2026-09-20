@@ -7,4 +7,4 @@ const router =  express.Router();
 router.post("/:id",updateUserController);
 router.delete("/delete/:id",deleteUserController);
 
-export default router;
+export default router; 

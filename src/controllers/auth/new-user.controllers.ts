@@ -22,7 +22,7 @@ const createUserController = async (req: Request, res: Response) => {
       data: createdUser,
     });
   } catch (error) {
-
+   console.log(error)
     if (error instanceof Error && error.message === "Email already exists") {
       return res.status(409).json({
         success: false,

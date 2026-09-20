@@ -11,7 +11,7 @@ const envPath =  path.resolve(process.cwd(),".env")
 dontenv.config({path:envPath,debug:true,encoding:"utf8",quiet:true})
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser());
+app.use(cookieParser()); 
 
 app.use('/api/auth',authentication);
 app.use('/api/user',user)

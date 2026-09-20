@@ -11,6 +11,9 @@ const getUserController = async(req:Request,res:Response)=>{
             data:user
           })
     } catch (error) {
+
+        console.log( "this is the error ",error);
+
         if(error instanceof Error){
             if(error.message === "User not found"){
                 return res.status(404).json({
