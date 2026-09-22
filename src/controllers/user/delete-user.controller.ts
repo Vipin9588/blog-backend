@@ -6,15 +6,17 @@ import { deleteUser } from "#/models/user/delete-user.model.js";
     res: Response
 ) => {
     try {
-         const {id} = req.user
+         const {id} = req.user;
+        console.log("User ID to delete:", id);
         const deletedUser = await deleteUser(id);
 
-        return res.status(200).json({
+        return res.status(200).json({      
             success: true,
             message: "User deleted successfully.",
             data: deletedUser,
         });
     } catch (error) {
+        console.log("Error deleting user:", error);
         if (error instanceof Error) {
             if (error.message === "Invalid user ID") {
                 return res.status(400).json({
@@ -36,6 +38,6 @@ import { deleteUser } from "#/models/user/delete-user.model.js";
             message: "Internal Server Error",
         });
     }
-};
+};   
 
 export {deleteUserController}
