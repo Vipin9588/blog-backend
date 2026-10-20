@@ -4,7 +4,6 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 const DEFAULT_ROLE_ID = 1;
 const newUser = async (user: userType) => {
-  console.log("Creating new user:", user);
   try {
     return await prisma.users.create({ 
       data:{
