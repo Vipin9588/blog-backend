@@ -10,7 +10,6 @@ interface Options {
     siteUrl?: string;
     year?: number;
 }
-import { generateOTP } from "./otp-generate.js";
 const escapeHtml = (value: string) =>
     value
         .replace(/&/g, "&amp;")
@@ -19,7 +18,7 @@ const escapeHtml = (value: string) =>
         .replace(/"/g, "&quot;");
 
 export function generateVerificationEmail(
-    code:number,
+    code:string, 
     url: string,
     {
         logoUrl = "https://yourdomain.com/logo.png",
