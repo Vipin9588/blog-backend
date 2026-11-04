@@ -1,11 +1,7 @@
 import crypto from "node:crypto";
+import { createOtpEntry } from "#/models/email/otp.model.js";
 
- interface OTPResult {
-        otp: number;
-        expiresAt: Date;
- }
-
-const generateOTP = (length: number = 6): OTPResult => {
+const generateOTP = async(user_id:number,length: number = 6):Promise<string> => {
     if (!Number.isInteger(length) || length < 1 || length > 9) {
         throw new Error("OTP length must be between 1 and 9");
     }
@@ -13,7 +9,7 @@ const generateOTP = (length: number = 6): OTPResult => {
     const min = 10 ** (length - 1);
     const max = 10 ** length;
     const cryptoRandomInt =  crypto.randomInt(min, max);
-    return { otp: cryptoRandomInt, expiresAt }
-
+    const otp = await createOtpEntry(user_id, cryptoRandomInt.toString(), expiresAt);
+    return  otp;
 }
 export { generateOTP };
