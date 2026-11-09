@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
 import { deleteUser } from "#/models/user/delete-user.model.js";
 
- const deleteUserController = async (
+const deleteUserController = async (
     req: Request,
     res: Response
 ) => {
     try {
-         const {id} = req.user;
-        console.log("User ID to delete:", id);
+        const { id } = req.user;
         const deletedUser = await deleteUser(id);
 
-        return res.status(200).json({      
+        return res.status(200).json({
             success: true,
             message: "User deleted successfully.",
             data: deletedUser,
@@ -38,6 +37,6 @@ import { deleteUser } from "#/models/user/delete-user.model.js";
             message: "Internal Server Error",
         });
     }
-};   
+};
 
-export {deleteUserController}
+export { deleteUserController }

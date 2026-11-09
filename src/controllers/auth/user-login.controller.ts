@@ -43,7 +43,7 @@ const loginUserController = async (req: Request, res: Response) => {
         res.cookie("accessToken", token, {
             httpOnly: true,
             secure: env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 24 * 60 * 60 * 1000,
         })
 
@@ -57,7 +57,7 @@ const loginUserController = async (req: Request, res: Response) => {
         return res.status(200).json({
             success: true,
             message: "Login successful",
-            data: user
+            data: { ...user, password_hash: undefined }
         });
     } catch (error) {
         if (error instanceof Error) {
