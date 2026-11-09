@@ -10,15 +10,18 @@ const verifyEmail = async (user_id: number) => {
     const findExpiredOtp = await prisma.email_verification_tokens.findFirst({
         where: {
             user_id: user_id,
+        },
+        orderBy: {
+            created_at: 'desc'
         }
     });
-    const expiresAt = new Date(findExpiredOtp?.expire_at || 0);
+    const expiresAt = new Date(findExpiredOtp?.expire_at ||0).getTime();
     const currentTime = new Date();
     console.log("Current Time:", currentTime);
     console.log("Expires At:", expiresAt);
     console.log("current "+currentTime+" expires at "+expiresAt);
-    console.log("token valid ",currentTime > expiresAt);
-    if (expiresAt>currentTime) {
+    console.log("token valid ", currentTime.getTime() > expiresAt);
+    if (expiresAt < currentTime.getTime()) {
         throw new Error("Verification token has expired");
     }
 
