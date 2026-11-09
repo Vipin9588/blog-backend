@@ -17,8 +17,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function verifyEmailSent(touserEmail: string) {
-  const OTP = await generateOTP(1, 6); // Generate a 6-digit OTP
+async function verifyEmailSent(touserEmail: string,userId:number) {
+  const OTP = await generateOTP(userId, 6); // Generate a 6-digit OTP
   const { subject, html, text } = generateVerificationEmail(
     OTP,
     `http://localhost:${env.PORT}/api/user/sent/email/verify?token=${OTP}`,
@@ -46,17 +46,28 @@ async function verifyEmailSent(touserEmail: string) {
   }
 }
 
-const verifyEmailSentController = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-    await verifyEmailSent(email);
-  }
-  catch (error) {
-    console.error("Email sending failed:", error);
-    res.status(500).json({ error: "Failed to send verification email" });
-  }
-  res.status(200).json({ message: "Verification email sent successfully" });
-}
+const verifyEmailSentController = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const { email ,userId} = req.body;
+         console.log("Request Body:",req.body);
+        await verifyEmailSent(email,userId);
+
+        return res.status(200).json({
+            message: "Verification email sent successfully"
+        });
+
+    } catch (error) {
+
+        console.error("Email sending failed:", error);
+
+        return res.status(500).json({
+            error: "Failed to send verification email"
+        });
+    }
+};
 
 
 const verifyEmailController = async (req: Request, res: Response) => {
