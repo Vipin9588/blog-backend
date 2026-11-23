@@ -54,4 +54,4 @@ const updateBlog = async(blog_id:number, B:createBlog)=>{
 }
 
 
-export {createNewBlog, deleteBlog, publishBlog}
+export {createNewBlog, deleteBlog, publishBlog,updateBlog}
