@@ -1,9 +1,10 @@
 import generateOrGetSlug from "#/controllers/slug/slug.controller.js";
-import { createNewBlog,deleteBlog,publishBlog } from "#/models/blog/blog.model.js";
+import { createNewBlog,deleteBlog,publishBlog,updateBlog } from "#/models/blog/blog.model.js";
 import { Request, Response } from 'express'
 const createBlogController = async (req: Request, res: Response) => {
     const { title, content, cover_image, status, visibility, allow_comments } = req.body
     const user_id = req.user?.id;
+    console.log("b",req.body)
     try {
         const slug_id = await generateOrGetSlug(title);
         const newBlog = await createNewBlog({
@@ -25,7 +26,7 @@ const createBlogController = async (req: Request, res: Response) => {
 
 }
 
-
+ 
 const deleteBlogController = async (req: Request, res: Response) => {
 
     const { id } = req.params;
@@ -58,11 +59,24 @@ const publishBlogController = async (req: Request, res: Response) => {
     }
 }
 
-const t = {
-  title: "Understanding Node.js Event Loop",
-  content: "The Node.js Event Loop is responsible for handling asynchronous operations. It allows Node.js to perform non-blocking I/O operations.",
-  cover_image: "https://example.com/images/nodejs-event-loop.jpg",
-  status: "draft",
-  visibility: "public",
-  allow_comments: true
+
+const updateBlogController = async(req:Request,res:Response)=>{
+    const blogId = Number(req.params?.id);
+    const updatedBlog =  req.body;
+
+    if(!blogId || !updatedBlog){
+        return res.status(401).json({
+            message:"Bad Request"
+        })
+    }
+
+    try {
+        const updated = await updateBlog(blogId,updatedBlog);
+        res.status(200).json({message:"successfully updated"})
+    } catch (error) {
+        res.status(500).json({message:"Internal Server Error"})
+    }
+
 }
+
+export { createBlogController, deleteBlogController, publishBlogController ,updateBlogController}
