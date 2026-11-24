@@ -37,3 +37,14 @@ export const updateBlogMediaModel = async (
         }
     });
 };
+
+
+export const deleteMedia = async(user:number,blogId:number,mediaId:number)=>{
+    return await prisma.blog_media.delete({
+        where:{
+            id:mediaId,
+            uploaded_by:user,
+            blog_id:blogId
+        }
+    })
+}
