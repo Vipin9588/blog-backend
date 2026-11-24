@@ -7,6 +7,7 @@ import user from '#/routes/user/user.routes.js'
 import verifyEmail from '#/routes/verifyemail/verfiy.js'
 import blog from '#/routes/blog/blog.routes.js';
 import authMiddleware from './middleware/auth/auth.middleware.js';
+import blogMedia from '#/routes/media/blogMedia.routes.js'
 // import verifyEmailSent from '#/routes/verifyemail/verfiy.js'
 const app = express();
 const envPath =  path.resolve(process.cwd(),".env")
@@ -35,4 +36,5 @@ app.use('/api/auth',authentication);
 app.use('/api/user',user)
 app.use('/api/user/sent/email',verifyEmail)
 app.use('/api/blog',authMiddleware,blog)
+app.use('/api/media',blogMedia)
 export default app;
