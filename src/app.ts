@@ -36,5 +36,5 @@ app.use('/api/auth',authentication);
 app.use('/api/user',user)
 app.use('/api/user/sent/email',verifyEmail)
 app.use('/api/blog',authMiddleware,blog)
-app.use('/api/media',blogMedia)
+app.use('/api/media',authMiddleware,blogMedia)
 export default app;
